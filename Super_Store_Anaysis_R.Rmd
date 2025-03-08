@@ -1,0 +1,97 @@
+---
+title: "Super_Store_Analysis"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r cars}
+#import Libraries
+library(tidyverse)
+library(ggplot2)
+```
+```{r pressure, echo=TRUE}
+##See DataFrame
+df <- read.csv("E:/data analytics/datasets/SampleSuperstore.csv")
+print(head(df))
+```
+***Data Cleaning***
+```{r}
+# See number of rows & columns
+dim(df)
+```
+```{r}
+# See dataset info
+str(df)
+```
+```{r}
+# See count of null values in each column
+colSums(is.na(df))
+```
+***Exploratory Data Analysis (EDA)***
+```{r}
+# Summary of dataset
+summary(df)
+```
+```{r}
+# See total sales
+total_sales <- sum(df$Sales, na.rm = TRUE)
+paste("The TOtal Sales is : ",total_sales)
+
+```
+```{r}
+# See average profit
+avg_profit <- mean(df$Profit, na.rm = TRUE)
+paste("The Average Profit is : ",avg_profit)
+```
+```{r}
+# See average sales by category
+average_sales <- df %>%
+  group_by(Category) %>%
+  summarise(Avg_Sales = mean(Sales, na.rm = TRUE))
+print(average_sales)
+```
+```{r}
+##See average sales by sub-category
+average_sal <- df %>%
+  group_by(Sub.Category) %>%
+  summarise(Avg_Sales = mean(Sales, na.rm = TRUE))
+print(average_sal)
+
+```
+```{r}
+# See top 10 most buying sub-categories
+top_10_sub_categories <- average_sal %>%
+  arrange(desc(Avg_Sales)) %>%
+  head(10)
+print(top_10_sub_categories)
+```
+```{r}
+# See top 10 buying cities
+top_10_cities <- df %>%
+  group_by(City) %>%
+  summarise(Total_Sales = sum(Sales, na.rm = TRUE)) %>%
+  arrange(desc(Total_Sales)) %>%
+  head(10)
+print(top_10_cities)
+
+```
+```{r}
+# Plot Sales by Category
+ggplot(df, aes(x = Category, y = Sales, fill = Category)) +
+  geom_bar(stat = "identity") +
+  theme_minimal() +
+  labs(title = "Total Sales by Category", x = "Category", y = "Sales")
+```
+```{r}
+# Plot Sales by Sub-Category
+ggplot(df, aes(x = reorder(Sub.Category, Sales), y = Sales, fill = Sub.Category)) +
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  theme_minimal() +
+  labs(title = "Total Sales by Sub-Category", x = "Sub-Category", y = "Sales")
+
+```
+
